@@ -19,3 +19,7 @@
 
 # Go workspace file
 go.work
+
+config/config.yaml
+config/rsa_private.pem
+config/rsa_public.pem

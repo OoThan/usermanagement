@@ -1,0 +1,33 @@
+# app
+app:
+  name: "usermanagement"
+  domain: "usermanagement.xyz"
+
+# mongo
+mongo:
+  host: 127.0.0.1
+  port: 27017
+  username:
+  password:
+  database: usermanagement
+
+# mysql
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  username: "admin"
+  password: ""
+  database: "usermanagement"
+
+# redis
+redis:
+  host: 127.0.0.1
+  port: 6379
+  username: ""
+  password: ""
+
+# rsa
+rsa:
+  private:  "config/rsa_private.pem"
+  public: "config/rsa_public.pem"
+  secret: "userManageMentSecret"
