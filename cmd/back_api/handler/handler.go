@@ -30,4 +30,8 @@ func NewHandler(c *HConfig) *Handler {
 
 func (h *Handler) Register() {
 	h.R.Use(middleware.Cors())
+
+	// user
+	userHandler := newUserHandler(h)
+	userHandler.register()
 }

@@ -6,26 +6,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type adminHandler struct {
+type userHandler struct {
 	R    *gin.Engine
 	repo *repository.Repository
 }
 
-func newAdminHandler(h *Handler) *adminHandler {
-	return &adminHandler{
+func newUserHandler(h *Handler) *userHandler {
+	return &userHandler{
 		R:    h.R,
 		repo: h.repo,
 	}
 }
 
-func (ctr *adminHandler) register() {
+func (ctr *userHandler) register() {
 	group := ctr.R.Group("/api/users")
 	// group.Use(middleware.AuthMiddleware(ctr.repo))
 
-	group.POST("/create", ctr.createAdmin)
+	group.POST("/create", ctr.createUser)
 }
 
-func (ctr *adminHandler) createAdmin(c *gin.Context) {
+func (ctr *userHandler) createUser(c *gin.Context) {
 	res := utils.GenerateSuccessResponse(nil)
 	c.JSON(res.HttpStatusCode, res)
 }
