@@ -1,28 +1,31 @@
 package handler
 
 import (
-	"github.com/OoThan/usermanagement/internal/ds"
 	"github.com/OoThan/usermanagement/internal/repository"
+	"github.com/OoThan/usermanagement/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
-type Handler struct {
+type adminHandler struct {
 	R    *gin.Engine
 	repo *repository.Repository
 }
 
-type HConfig struct {
-	R  *gin.Engine
-	DS *ds.DataSource
+func newAdminHandler(h *Handler) *adminHandler {
+	return &adminHandler{
+		R:    h.R,
+		repo: h.repo,
+	}
 }
 
-func NewHandler(c *HConfig) *Handler {
-	return &Handler{
-		R: c.R,
-		repo: repository.NewRepository(
-			&repository.RepoConfig{
-				DS: c.DS,
-			},
-		),
-	}
+func (ctr *adminHandler) register() {
+	group := ctr.R.Group("/api/users")
+	// group.Use(middleware.AuthMiddleware(ctr.repo))
+
+	group.POST("/create", ctr.createAdmin)
+}
+
+func (ctr *adminHandler) createAdmin(c *gin.Context) {
+	res := utils.GenerateSuccessResponse(nil)
+	c.JSON(res.HttpStatusCode, res)
 }

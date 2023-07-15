@@ -23,5 +23,25 @@ func AuthMiddleware(r *repository.Repository) gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
+
+		claim, err := utils.ValidateAccessToken(accessToken[1])
+		if err != nil {
+			res := utils.GenerateTokenExpireErrorResponse(fmt.Errorf("token experied"))
+			ctx.JSON(res.HttpStatusCode, res)
+			ctx.Abort()
+			return
+		}
+
+		user, err := r.User.FindByField(ctx.Request.Context(), "id", claim.Id)
+		if err != nil {
+			res := utils.GenerateGormErrorResponse(err)
+			ctx.JSON(res.HttpStatusCode, res)
+			ctx.Abort()
+			return
+		}
+
+		ctx.Set("user", user)
+		ctx.Set("DS", r.DS.DB)
+		ctx.Next()
 	}
 }
