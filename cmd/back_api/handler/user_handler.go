@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/OoThan/usermanagement/internal/repository"
+	"github.com/OoThan/usermanagement/pkg/dto"
 	"github.com/OoThan/usermanagement/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -26,6 +27,11 @@ func (ctr *userHandler) register() {
 }
 
 func (ctr *userHandler) createUser(c *gin.Context) {
+	req := &dto.UserCreateReq{}
+	if err := c.ShouldBind(req); err != nil {
+		
+	}
+
 	res := utils.GenerateSuccessResponse(nil)
 	c.JSON(res.HttpStatusCode, res)
 }

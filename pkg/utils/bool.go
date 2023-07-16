@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
@@ -13,4 +14,9 @@ func IsDuplicate(err error) bool {
 
 func IsErrorNotFound(err error) bool {
 	return errors.Is(err, gorm.ErrRecordNotFound)
+}
+
+func IsValidationError(err error) bool {
+	_, ok := err.(validator.ValidationErrors)
+	return ok
 }
