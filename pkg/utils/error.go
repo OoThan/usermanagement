@@ -18,7 +18,7 @@ func GenerateSuccessResponse(data any) *dto.Response {
 	return res
 }
 
-func GenerateRequestValidationErrorResponse(err error) *dto.Response {
+func GenerateValidationErrorResponse(err error) *dto.Response {
 	res := &dto.Response{}
 	res.ErrMsg = err.Error()
 	if IsValidationError(err) {
