@@ -25,6 +25,7 @@ func (ctr *userHandler) register() {
 	group := ctr.R.Group("/api/users")
 	// group.Use(middleware.AuthMiddleware(ctr.repo))
 
+	
 	group.POST("/list", ctr.listUser)
 	group.POST("/create", ctr.createUser)
 	group.POST("/update", ctr.updateUser)
