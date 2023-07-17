@@ -23,3 +23,8 @@ type UserListReq struct {
 	Email string `form:"email" json:"email"`
 	PageReq
 }
+
+type UserLoginReq struct {
+	EmailName string `json:"email_name" binding:"required"`
+	Password  string `json:"password" binding:"required"`
+}

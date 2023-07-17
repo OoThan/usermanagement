@@ -18,6 +18,14 @@ func GenerateSuccessResponse(data any) *dto.Response {
 	return res
 }
 
+func GenerateServerError(err error) *dto.Response {
+	res := &dto.Response{}
+	res.ErrCode = 500
+	res.ErrMsg = err.Error()
+	res.HttpStatusCode = http.StatusInternalServerError
+	return res
+}
+
 func GenerateValidationErrorResponse(err error) *dto.Response {
 	res := &dto.Response{}
 	res.ErrMsg = err.Error()
