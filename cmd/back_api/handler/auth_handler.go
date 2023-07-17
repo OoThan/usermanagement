@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/OoThan/usermanagement/internal/middleware"
 	"github.com/OoThan/usermanagement/internal/repository"
 	"github.com/OoThan/usermanagement/pkg/dto"
 	"github.com/OoThan/usermanagement/pkg/utils"
@@ -26,6 +27,8 @@ func newAuthHandler(h *Handler) *authHandler {
 func (ctr *authHandler) register() {
 	group := ctr.R.Group("/api/auth")
 	group.POST("/login", ctr.login)
+
+	group.Use(middleware.AuthMiddleware(ctr.repo))
 	group.POST("/logout", ctr.logout)
 	group.POST("/refresh", ctr.refresh)
 }

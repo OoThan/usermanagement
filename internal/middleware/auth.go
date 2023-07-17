@@ -16,9 +16,16 @@ type authHandler struct {
 func AuthMiddleware(r *repository.Repository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		h := &authHandler{}
+		if err := ctx.ShouldBindHeader(&h); err != nil {
+			res := utils.GenerateAuthErrorResponse(err)
+			ctx.JSON(res.HttpStatusCode, res)
+			ctx.Abort()
+			return
+		}
+
 		accessToken := strings.Split(h.AccessToken, "Bearer ")
 		if len(accessToken) != 2 {
-			res := utils.GenerateAuthErrorResponse(fmt.Errorf("Permission denied"))
+			res := utils.GenerateAuthErrorResponse(fmt.Errorf("permission denied"))
 			ctx.JSON(res.HttpStatusCode, res)
 			ctx.Abort()
 			return

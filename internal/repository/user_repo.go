@@ -34,7 +34,7 @@ func (r *userRepository) FindByField(ctx context.Context, field, value any) (*mo
 func (r *userRepository) FindOrByField(ctx context.Context, field1, field2, value any) (*model.User, error) {
 	db := r.db.WithContext(ctx).Debug().Model(&model.User{})
 	user := &model.User{}
-	err := db.First(&user, fmt.Sprintf("%s = ? OR %s = ?", field1, field2), value).Error
+	err := db.First(&user, fmt.Sprintf("%s = ? OR %s = ?", field1, field2), value, value).Error
 	return user, err
 }
 
@@ -85,7 +85,8 @@ func (r *userRepository) Create(ctx context.Context, user *model.User) error {
 		}
 		return db.Save(&user).Error
 	}
-	return db.Create(&user).Error
+	tb := r.db.WithContext(ctx).Debug().Model(&model.User{})
+	return tb.Create(&user).Error
 }
 
 func (r *userRepository) Update(ctx context.Context, updateFields *model.UpdateFields) error {
