@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/OoThan/usermanagement/internal/middleware"
 	"github.com/OoThan/usermanagement/internal/model"
 	"github.com/OoThan/usermanagement/internal/repository"
 	"github.com/OoThan/usermanagement/pkg/dto"
@@ -23,9 +24,7 @@ func newUserHandler(h *Handler) *userHandler {
 
 func (ctr *userHandler) register() {
 	group := ctr.R.Group("/api/users")
-	// group.Use(middleware.AuthMiddleware(ctr.repo))
-
-	
+	group.Use(middleware.AuthMiddleware(ctr.repo))
 	group.POST("/list", ctr.listUser)
 	group.POST("/create", ctr.createUser)
 	group.POST("/update", ctr.updateUser)
@@ -52,6 +51,13 @@ func (ctr *userHandler) createUser(c *gin.Context) {
 	user := &model.User{}
 	if err := copier.Copy(&user, req); err != nil {
 		res := utils.GenerateValidationErrorResponse(err)
+		c.JSON(res.HttpStatusCode, res)
+		return
+	}
+
+	err = ctr.repo.User.Create(c.Request.Context(), user)
+	if err != nil {
+		res := utils.GenerateGormErrorResponse(err)
 		c.JSON(res.HttpStatusCode, res)
 		return
 	}

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/OoThan/usermanagement/internal/middleware"
 	"github.com/OoThan/usermanagement/internal/repository"
 	"github.com/OoThan/usermanagement/pkg/dto"
-	"github.com/OoThan/usermanagement/pkg/logger"
 	"github.com/OoThan/usermanagement/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +27,8 @@ func newAuthHandler(h *Handler) *authHandler {
 func (ctr *authHandler) register() {
 	group := ctr.R.Group("/api/auth")
 	group.POST("/login", ctr.login)
+
+	group.Use(middleware.AuthMiddleware(ctr.repo))
 	group.POST("/logout", ctr.logout)
 	group.POST("/refresh", ctr.refresh)
 }
@@ -83,7 +85,7 @@ func (ctr *authHandler) refresh(c *gin.Context) {
 	tokens := strings.Split(c.GetHeader("Authorization"), "Bearer ")
 	refreshToken, err := utils.GenerateRefreshToken(tokens[1])
 	if err != nil {
-		logger.Sugar.Debug(err.Error())
+		// logger.Sugar.Debug(err.Error())
 		if strings.Contains(err.Error(), "not expired") {
 			res := utils.GenerateSuccessResponse(gin.H{
 				"access_token": tokens[1],

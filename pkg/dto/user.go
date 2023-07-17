@@ -10,7 +10,7 @@ type UserUpdateReq struct {
 	Id       uint64 `form:"id" json:"id" binding:"required"`
 	Name     string `form:"name" json:"name" binding:"required"`
 	Email    string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
+	Password string `form:"password" json:"password"`
 }
 
 type UserDeleteReqByIDs struct {
