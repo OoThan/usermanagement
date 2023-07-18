@@ -9,18 +9,21 @@ import (
 	"github.com/OoThan/usermanagement/pkg/dto"
 	"github.com/OoThan/usermanagement/pkg/utils"
 	"github.com/go-redis/redis/v8"
+	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 
 type userRepository struct {
 	db  *gorm.DB
 	rdb *redis.Client
+	mdb *mongo.Client
 }
 
 func newUserRespository(rConfig *RepoConfig) *userRepository {
 	return &userRepository{
 		db:  rConfig.DS.DB,
 		rdb: rConfig.DS.RDB,
+		mdb: rConfig.DS.MDB,
 	}
 }
 
