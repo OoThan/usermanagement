@@ -38,7 +38,7 @@ func (ctr *userHandler) register() {
 
 func (ctr *userHandler) createUser(c *gin.Context) {
 	req := &dto.UserCreateReq{}
-	loginUser := c.MustGet("admin").(*model.User)
+	loginUser := c.MustGet("user").(*model.User)
 	if err := c.ShouldBind(req); err != nil {
 		res := utils.GenerateValidationErrorResponse(err)
 		c.JSON(res.HttpStatusCode, res)
@@ -134,7 +134,7 @@ func (ctr *userHandler) updateUser(c *gin.Context) {
 
 func (ctr *userHandler) deleteUser(c *gin.Context) {
 	req := &dto.UserDeleteReqByIDs{}
-	loginUser := c.MustGet("admin").(*model.User)
+	loginUser := c.MustGet("user").(*model.User)
 	if err := c.ShouldBind(req); err != nil {
 		res := utils.GenerateValidationErrorResponse(err)
 		c.JSON(res.HttpStatusCode, res)
