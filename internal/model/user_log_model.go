@@ -14,3 +14,10 @@ type UserLog struct {
 	UpdatedAt time.Time      `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"-"`
 }
+
+type UserLogMongo struct {
+	UserID     string `bson:"user_id"`
+	Event      string `bson:"event"`
+	Data       User   `bson:"data"`
+	Timestamps int64  `bson:"timestamps"`
+}

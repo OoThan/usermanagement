@@ -1,13 +1,18 @@
 package handler
 
 import (
+	"context"
+	"time"
+
 	"github.com/OoThan/usermanagement/internal/middleware"
 	"github.com/OoThan/usermanagement/internal/model"
 	"github.com/OoThan/usermanagement/internal/repository"
 	"github.com/OoThan/usermanagement/pkg/dto"
+	"github.com/OoThan/usermanagement/pkg/logger"
 	"github.com/OoThan/usermanagement/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type userHandler struct {
@@ -33,6 +38,7 @@ func (ctr *userHandler) register() {
 
 func (ctr *userHandler) createUser(c *gin.Context) {
 	req := &dto.UserCreateReq{}
+	loginUser := c.MustGet("admin").(*model.User)
 	if err := c.ShouldBind(req); err != nil {
 		res := utils.GenerateValidationErrorResponse(err)
 		c.JSON(res.HttpStatusCode, res)
@@ -60,6 +66,17 @@ func (ctr *userHandler) createUser(c *gin.Context) {
 		res := utils.GenerateGormErrorResponse(err)
 		c.JSON(res.HttpStatusCode, res)
 		return
+	}
+
+	mdb := ctr.repo.DS.MDB.Database("usermanagement").Collection("user_logs")
+	_, err = mdb.InsertOne(context.Background(), bson.D{
+		{Key: "user_id", Value: loginUser.Id},
+		{Key: "event", Value: "user insert event"},
+		{Key: "data", Value: user},
+		{Key: "timestamps", Value: time.Now().Unix()},
+	})
+	if err != nil {
+		logger.Sugar.Error(err)
 	}
 
 	res := utils.GenerateSuccessResponse(nil)
@@ -100,12 +117,24 @@ func (ctr *userHandler) updateUser(c *gin.Context) {
 		return
 	}
 
+	mdb := ctr.repo.DS.MDB.Database("usermanagement").Collection("user_logs")
+	_, err := mdb.InsertOne(context.Background(), bson.D{
+		{Key: "user_id", Value: updateFields.Value},
+		{Key: "event", Value: "user update event"},
+		{Key: "data", Value: updateFields.Data},
+		{Key: "timestamps", Value: time.Now().Unix()},
+	})
+	if err != nil {
+		logger.Sugar.Error(err)
+	}
+
 	res := utils.GenerateSuccessResponse(nil)
 	c.JSON(res.HttpStatusCode, res)
 }
 
 func (ctr *userHandler) deleteUser(c *gin.Context) {
 	req := &dto.UserDeleteReqByIDs{}
+	loginUser := c.MustGet("admin").(*model.User)
 	if err := c.ShouldBind(req); err != nil {
 		res := utils.GenerateValidationErrorResponse(err)
 		c.JSON(res.HttpStatusCode, res)
@@ -118,6 +147,16 @@ func (ctr *userHandler) deleteUser(c *gin.Context) {
 		res := utils.GenerateGormErrorResponse(err)
 		c.JSON(res.HttpStatusCode, res)
 		return
+	}
+
+	mdb := ctr.repo.DS.MDB.Database("usermanagement").Collection("user_logs")
+	_, err = mdb.InsertOne(context.Background(), bson.D{
+		{Key: "user_id", Value: loginUser.Id},
+		{Key: "event", Value: "user delete event"},
+		{Key: "timestamps", Value: time.Now().Unix()},
+	})
+	if err != nil {
+		logger.Sugar.Error(err)
 	}
 
 	res := utils.GenerateSuccessResponse(nil)
