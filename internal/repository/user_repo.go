@@ -3,12 +3,16 @@ package repository
 import (
 	"context"
 	"fmt"
+	"testing"
 	"time"
 
+	"github.com/OoThan/usermanagement/internal/ds"
 	"github.com/OoThan/usermanagement/internal/model"
 	"github.com/OoThan/usermanagement/pkg/dto"
+	"github.com/OoThan/usermanagement/pkg/logger"
 	"github.com/OoThan/usermanagement/pkg/utils"
 	"github.com/go-redis/redis/v8"
+	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
@@ -90,6 +94,28 @@ func (r *userRepository) Create(ctx context.Context, user *model.User) error {
 	}
 	tb := r.db.WithContext(ctx).Debug().Model(&model.User{})
 	return tb.Create(&user).Error
+}
+
+func TestUserCreate(t *testing.T) {
+	ds, err := ds.NewDataSource()
+	if err != nil {
+		logger.Sugar.Error(err)
+	}
+	repo := newUserRespository(&RepoConfig{
+		DS: ds,
+	})
+
+	t.Run("Create", func(t *testing.T) {
+		user := &model.User{
+			Name:  "Mya Mya",
+			Email: "myamya@email.com",
+		}
+
+		err := repo.Create(context.Background(), user)
+		assert.NoError(t, err)
+
+		assert.NotEqual(t, uint64(0), user.Id, "Expected user ID to be set, but got 0")
+	})
 }
 
 func (r *userRepository) Update(ctx context.Context, updateFields *model.UpdateFields) error {
